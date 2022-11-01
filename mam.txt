@@ -1,0 +1,67 @@
+
+
+
+var keycloakJsUrl=https://10.0.0.95:8190/auth/js/keycloak.js
+
+
+var keycloakOBJ = {
+	  "realm": "tashicell",
+	  "url": "http://10.0.14.218:8180/auth/",
+	  "clientId": "CoMS_Tashicell"
+	};
+var keycloakToken="";
+
+
+===============librarary calling 
+
+<script>document.write('<script src="<c:url value="'+keycloakJsUrl+'?dev='+version+'" />"\><\/script>');</script>
+
+
+
+var keycloak = Keycloak(keycloakOBJ);
+
+
+// authentication 
+ keycloak.init({onLoad: 'login-required'}).success(function(authenticated) {
+    // console.log(authenticated ? 'authenticated' : 'not authenticated');
+     if(authenticated){
+         console.log("authenticated keycloak");
+         //keycloakToken = keycloak.token;
+         }
+     else{
+    	 console.log(" not authenticated keycloak");
+        }
+}).error(function() {
+    console.log('failed to initialize');
+}); 
+
+ // token session timeout
+ setTimeout(function(){
+    keycloak.updateToken(20).success(function(refreshed){
+        if (refreshed) {
+            console.debug('Token refreshed' + refreshed);
+        } else {
+            console.warn('Token not refreshed, valid for '
+                + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+        }
+    }).catch(() => {
+        console.error('Failed to refresh token');
+        keycloak.logout();
+    });
+}, 60000); 
+
+
+
+
+================connect to keycloak =======
+
+http://10.0.0.95:8281/auth/admin/master/console/#/realms/Demo/clients
+
+
+admin/admin
+
+
+http://10.0.0.95:8281/auth/admin/Demo/console/#/realms/Demo/clients
+
+
+sysadmin/sysadmin
